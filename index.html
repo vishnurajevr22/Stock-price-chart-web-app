@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>NSE Stock Price Tracker</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: Arial, sans-serif; display: flex; height: 100vh; background: #f4f6f9; }
+
+    #sidebar {
+      width: 220px; background: #1e2a38; padding: 20px;
+      display: flex; flex-direction: column; gap: 10px;
+    }
+    #sidebar h2 { color: #fff; font-size: 16px; margin-bottom: 10px; }
+    .company-btn {
+      padding: 10px 14px; background: #2c3e50; color: #ccc;
+      border: none; border-radius: 8px; cursor: pointer;
+      text-align: left; font-size: 14px;
+    }
+    .company-btn:hover, .company-btn.active {
+      background: #3498db; color: #fff;
+    }
+
+    #main {
+      flex: 1; padding: 30px; display: flex;
+      flex-direction: column; gap: 16px;
+    }
+    #main h1 { font-size: 20px; color: #333; }
+    #chart-container {
+      background: white; border-radius: 12px;
+      padding: 20px; flex: 1;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+  </style>
+</head>
+<body>
+
+<div id="sidebar">
+  <h2>Companies</h2>
+  <button class="company-btn" onclick="showChart('TCS')">TCS</button>
+  <button class="company-btn" onclick="showChart('Infosys')">Infosys</button>
+  <button class="company-btn" onclick="showChart('HDFC')">HDFC Bank</button>
+  <button class="company-btn" onclick="showChart('Reliance')">Reliance</button>
+  <button class="company-btn" onclick="showChart('Wipro')">Wipro</button>
+</div>
+
+<div id="main">
+  <h1 id="chart-title">NSE Stock Price Tracker — Click a company</h1>
+  <div id="chart-container">
+    <canvas id="myChart"></canvas>
+  </div>
+</div>
+
+<script>
+const labels = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+
+const stockData = {
+  'TCS':      [3200, 3250, 3180, 3300, 3270, 3350, 3400],
+  'Infosys':  [1450, 1480, 1460, 1500, 1490, 1520, 1510],
+  'HDFC':     [1600, 1580, 1620, 1650, 1630, 1700, 1680],
+  'Reliance': [2800, 2850, 2820, 2900, 2880, 2950, 3000],
+  'Wipro':    [420,  430,  415,  440,  435,  450,  445]
+};
+
+let chart = null;
+
+function showChart(company) {
+  document.getElementById('chart-title').textContent = company + ' — Stock Price (Last 7 Days)';
+
+  document.querySelectorAll('.company-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.textContent.trim() === company);
+  });
+
+  if (chart) chart.destroy();
+
+  const ctx = document.getElementById('myChart').getContext('2d');
+  chart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: labels,
+      datasets: [{
+        label: company + ' Price (₹)',
+        data: stockData[company],
+        borderColor: '#3498db',
+        backgroundColor: 'rgba(52,152,219,0.1)',
+        borderWidth: 2,
+        pointRadius: 5,
+        fill: true,
+        tension: 0.3
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { position: 'top' } },
+      scales: {
+        y: { beginAtZero: false }
+      }
+    }
+  });
+}
+</script>
+
+</body>
+</html>
